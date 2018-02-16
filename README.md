@@ -432,6 +432,7 @@ vendor/bin/ecs check --config vendor/rector/rector/ecs-after-rector.neon --fix
 - [How Rector Works?](/docs/HowItWorks.md)
 - [How to Create Own Rector](/docs/HowToCreateOwnRector.md)
 - [Service Name to Type Provider](/docs/ServiceNameToTypeProvider.md)
+- [3 Steps to Build PHAR](/docs/BuildingRectorPhar.md)
 
 ## How to Contribute
 
