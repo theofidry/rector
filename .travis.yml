@@ -28,6 +28,7 @@ script:
   # build phar test - 1st group is "build-phar" test step by step; 2nd group is all-together
   - |
     if [[ $BUILD_PHAR != "" ]]; then
+      mkdir build
       vendor/bin/php-scoper add-prefix --output-dir=build --force
       composer dump-autoload --working-dir=build --classmap-authoritative --no-dev
       chmod +x build/bin/rector
