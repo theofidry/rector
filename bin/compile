@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+set -x
+
+mkdir build || true
+vendor/bin/php-scoper add-prefix --output-dir=build --force
+composer dump-autoload --working-dir=build --classmap-authoritative --no-dev
+chmod +x build/bin/rector
+build/bin/rector
+composer build-phar
+php rector.phar
+vendor/bin/phpunit --testsuite=phar-build

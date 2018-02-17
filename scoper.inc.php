@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Symfony\Component\Finder\Finder;
+use Isolated\Symfony\Component\Finder\Finder;
 
 return [
     // By default when running php-scoper add-prefix, it will prefix all relevant code found in the current working
@@ -12,36 +12,44 @@ return [
         // Rector source
         Finder::create()
             ->files()
-            ->notName('*.sh')
-            ->in('bin')
+            ->notName('*.md')
             ->in('src')
             ->in('packages')
             ->exclude('tests'),
-
-        // /vendor files
         Finder::create()
             ->files()
-            ->name('*.php')
+            ->in('vendor/friendsofphp/php-cs-fixer/tests/Test')
+            ->append([
+                'vendor/friendsofphp/php-cs-fixer/tests/TestCase.php',
+                'bin/rector',
+                'bin/rector_bootstrap.php',
+                'composer.json',
+                'box.json',
+            ]),
+
+        // vendor files
+        Finder::create()
+            ->files()
             ->ignoreVCS(true)
+            ->notName('/LICENSE|.*\\.md|.*\\.dist|Makefile|composer\\.json|composer\\.lock/')
             ->exclude([
                 'doc',
                 'test',
-                'Test',
                 'test_old',
                 'tests',
-                'Tests'
+                'Tests',
+                'vendor-bin',
             ])
-            ->in(__DIR__ . '/vendor'),
+            ->in('vendor'),
+    ],
 
-        // workaround for php-cs-fixer's misslocation of source files in /tests directory
-        Finder::create()
-            ->files()
-            ->in(__DIR__ . '/vendor/friendsofphp/php-cs-fixer/tests/Test')
-            ->append([__DIR__ . '/vendor/friendsofphp/php-cs-fixer/tests/TestCase.php']),
+    'patchers' => [
+        function (string $filePath, string $prefix, string $contents): string {
+            if (__DIR__.'/vendor/nette/application/src/compatibility.php' === $filePath) {
+                return str_replace('\'Nette\\\\Application\\\\', '\''.$prefix.'\\\\Nette\\\\Application\\\\', $contents);
+            }
 
-        // required for php-scoper - "autoload" sections and "composer dump"
-        Finder::create()->append([
-            'composer.json',
-        ]),
+            return $contents;
+        },
     ],
 ];
